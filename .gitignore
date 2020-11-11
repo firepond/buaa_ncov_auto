@@ -1,0 +1,5 @@
+.vscode
+__pycache__
+rua.log
+*.png
+password.py
