@@ -1,12 +1,11 @@
 import sys
-import logging
 import io
-from time import sleep
 import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.expected_conditions import text_to_be_present_in_element
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -34,11 +33,13 @@ def sign():
         'User-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'}
     browser.get(url)
 
-    sleep(3)
+    try:
+        user = WebDriverWait(browser, 30).until(
+            EC.element_to_be_clickable((By.TAG_NAME, "input")))
+    finally:
+        browser.save_screenshot('picture1.png')
 
-    browser.save_screenshot('login.png')
-
-    username = browser.find_element_by_tag_name("input")
+    username = browser.find_element_by_tag_name('input')
     username.send_keys(pw.uni_user)
 
     password = browser.find_element_by_xpath("//input[@type='password']")
@@ -50,30 +51,30 @@ def sign():
 
     try:
         element = WebDriverWait(browser, 30).until(
-            EC.presence_of_element_located((By.NAME, "sfzx")))
+            EC.presence_of_element_located((By.XPATH, "//div[@name='sfzx']/div/div[1]")))
     finally:
         browser.save_screenshot('picture1.png')
+
+    if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息") :
+        datee = datetime.date.today()
+        print("%s already signed " % (datee), file=log)
+        log.flush()
+        browser.quit()
+        log.close()
+        quit()
 
     browser.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){" +
                            "var position = {\"coords\" : {\"latitude\": \"" + latitude + "\",\"longitude\": \"" + longitude + "\"}};" +
                            "success(position);}")
 
-    sleep(3)
-
     at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[1]")
     at_school.click()
-
-    sleep(1)
 
     temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
     temperature.click()
 
-    sleep(1)
-
     where = browser.find_element_by_name("area")
     where.click()
-
-    sleep(1)
 
     browser.save_screenshot('geo.png')
 
@@ -82,16 +83,14 @@ def sign():
 
     browser.save_screenshot('confirm.png')
 
-    sleep(3)
-
     confirm = browser.find_element_by_class_name('wapcf-btn-ok')
     confirm.click()
 
     browser.save_screenshot('ok.png')
     datee = datetime.date.today()
 
-    print("%s 成功打卡！" % (datee), file=log)
-    print("%s 成功打卡！" % (datee))
+    print("%s signed successfully! " % (datee), file=log)
+    print("%s signed successfully! " % (datee))
     log.flush()
 
     browser.quit()
