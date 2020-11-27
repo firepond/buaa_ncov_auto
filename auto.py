@@ -9,6 +9,9 @@ from selenium.webdriver.support.expected_conditions import text_to_be_present_in
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from time import sleep
+import time
+
 import auto_connect
 
 import password as pw
@@ -55,39 +58,51 @@ def sign():
     finally:
         browser.save_screenshot('picture1.png')
 
-    if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息") :
-        datee = datetime.date.today()
+    sleep(1)
+
+    if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息")(browser) :
+        datee = time.asctime()
         print("%s already signed " % (datee), file=log)
         log.flush()
         browser.quit()
         log.close()
-        quit()
+        return
+    sleep(1)
 
     browser.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){" +
                            "var position = {\"coords\" : {\"latitude\": \"" + latitude + "\",\"longitude\": \"" + longitude + "\"}};" +
                            "success(position);}")
 
-    at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[1]")
-    at_school.click()
-
-    temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
-    temperature.click()
+    sleep(1)
 
     where = browser.find_element_by_name("area")
     where.click()
+    sleep(3)
+
+    at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[1]")
+    at_school.click()
+    sleep(1)
+
+    temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
+    temperature.click()
+    sleep(1)
+
+  
 
     browser.save_screenshot('geo.png')
 
     footers = browser.find_element_by_class_name('footers')
     footers.click()
+    sleep(1)
 
     browser.save_screenshot('confirm.png')
 
     confirm = browser.find_element_by_class_name('wapcf-btn-ok')
     confirm.click()
+    sleep(1)
 
     browser.save_screenshot('ok.png')
-    datee = datetime.date.today()
+    datee = time.asctime()
 
     print("%s signed successfully! " % (datee), file=log)
     print("%s signed successfully! " % (datee))
