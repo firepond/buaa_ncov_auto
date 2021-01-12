@@ -16,8 +16,8 @@ import auto_connect
 
 import password as pw
 
-longitude = "116.34519775126265"                  # 定位经度
-latitude = "39.982642289294574"                   # 定位纬度
+longitude = "103.70565"                  # 定位经度
+latitude = "36.087104"                   # 定位纬度
 
 def sign():
     log = open('./rua.log', 'a')
