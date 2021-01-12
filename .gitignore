@@ -1,6 +1,6 @@
 .vscode
 __pycache__
-rua.log
+.log
 *.png
 password.py
 tools

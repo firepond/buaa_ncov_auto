@@ -21,7 +21,6 @@ def connect():
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     browser = webdriver.Chrome(options=chrome_options)
-    browser.set_window_size(1080, 1920)
 
     url = "https://gw.buaa.edu.cn"
     header = {
@@ -50,4 +49,8 @@ def connect():
     login.click()
     sleep(10)
     
+def main():
+    connect()
+
+main()
  

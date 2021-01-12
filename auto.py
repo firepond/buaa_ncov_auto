@@ -40,7 +40,8 @@ def sign():
         user = WebDriverWait(browser, 30).until(
             EC.element_to_be_clickable((By.TAG_NAME, "input")))
     finally:
-        browser.save_screenshot('picture1.png')
+        sleep(1)
+        browser.save_screenshot('login.png')
 
     username = browser.find_element_by_tag_name('input')
     username.send_keys(pw.uni_user)
@@ -56,13 +57,21 @@ def sign():
         element = WebDriverWait(browser, 30).until(
             EC.presence_of_element_located((By.XPATH, "//div[@name='sfzx']/div/div[1]")))
     finally:
-        browser.save_screenshot('picture1.png')
+        browser.save_screenshot('load.png')
 
     sleep(1)
 
     if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息")(browser) :
         datee = time.asctime()
-        print("%s already signed " % (datee), file=log)
+        print("%s already signed. " % (datee), file=log)
+        log.flush()
+        browser.quit()
+        log.close()
+        return
+
+    if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "未到填报时间")(browser) :
+        datee = time.asctime()
+        print("%s wait for sign, too early. " % (datee), file=log)
         log.flush()
         browser.quit()
         log.close()
@@ -101,7 +110,7 @@ def sign():
     confirm.click()
     sleep(1)
 
-    browser.save_screenshot('ok.png')
+    browser.save_screenshot('signed.png')
     datee = time.asctime()
 
     print("%s signed successfully! " % (datee), file=log)
@@ -112,7 +121,7 @@ def sign():
     log.close()
 
 
-def main():  # 0:05进行打卡
+def main(): 
   
     sign()
 
