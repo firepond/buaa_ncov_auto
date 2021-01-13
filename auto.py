@@ -12,8 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import time
 
-import auto_connect
-
 import password as pw
 
 longitude = "103.70565"                  # 定位经度
@@ -29,7 +27,7 @@ def sign():
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     browser = webdriver.Chrome(options=chrome_options)
-    browser.set_window_size(1080, 1920)
+    browser.set_window_size(720, 1280)
 
     url = "https://app.buaa.edu.cn/site/ncov/xisudailyup"
     header = {
@@ -88,15 +86,13 @@ def sign():
     where.click()
     sleep(3)
 
-    at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[1]")
-    at_school.click()
+    not_at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[2]")
+    not_at_school.click()
     sleep(1)
 
     temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
     temperature.click()
     sleep(1)
-
-  
 
     browser.save_screenshot('geo.png')
 
