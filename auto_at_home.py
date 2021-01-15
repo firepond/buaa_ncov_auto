@@ -17,13 +17,13 @@ import geo_info as gi
 
 
 def sign():
-    log = open('./rua.log', 'a')
+    log = open('C:/programming/buaa_ncov_auto/sign_at_home.log', 'a')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
     chrome_options = Options()
     chrome_options.add_experimental_option(
         "excludeSwitches", ["enable-logging"])
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     browser = webdriver.Chrome(options=chrome_options)
     browser.set_window_size(720, 1280)
@@ -54,58 +54,81 @@ def sign():
         element = WebDriverWait(browser, 30).until(
             EC.presence_of_element_located((By.XPATH, "//div[@name='sfzx']/div/div[1]")))
     finally:
-        browser.save_screenshot('load.png')
+        browser.save_screenshot('loaded.png')
 
-    sleep(1)
+    sleep(3)
 
+    # Check if already signed.
     if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息")(browser) :
         datee = time.asctime()
         print("%s already signed. " % (datee), file=log)
+        print("%s already signed. " % (datee))
         log.flush()
         browser.quit()
         log.close()
         return
 
+    # Check if it is too early for sign.
     if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "未到填报时间")(browser) :
         datee = time.asctime()
         print("%s wait for sign, too early. " % (datee), file=log)
+        print("%s wait for sign, too early. " % (datee))
         log.flush()
         browser.quit()
         log.close()
         return
-    sleep(1)
 
+    # Load geo info.
     browser.execute_script("window.navigator.geolocation.getCurrentPosition=function(success){" +
-                           "var position = {\"coords\" : {\"latitude\": \"" + latitude + "\",\"longitude\": \"" + longitude + "\"}};" +
+                           "var position = {\"coords\" : {\"latitude\": \"" + gi.lz_latitude + "\",\"longitude\": \"" + gi.lz_longitude + "\"}};" +
                            "success(position);}")
-
     sleep(1)
 
+    # 所在地点
     where = browser.find_element_by_name("area")
     where.click()
-    sleep(3)
-
-    not_at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[2]")
-    not_at_school.click()
-    sleep(1)
-
-    temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
-    temperature.click()
-    sleep(1)
-
+    sleep(2)
     browser.save_screenshot('geo.png')
 
+    #今日体温范围
+    body_temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
+    body_temperature.click()
+    sleep(0.5)
+    browser.save_screenshot('tw.png')
+
+    # 是否在校
+    not_at_school = browser.find_element_by_xpath("//div[@name='sfzx']/div/div[2]")
+    not_at_school.click()
+    browser.save_screenshot('sfzx.png')
+
+    #是否请假外出
+    ask_for_leave = browser.find_element_by_xpath("//div[@name='askforleave']/div/div[1]")
+    ask_for_leave.click()
+    browser.save_screenshot('askforleave.png')
+
+    #今日是否返校住宿
+    not_return_to_school = browser.find_element_by_xpath("//div[@name='sffxzs']/div/div[2]")
+    not_return_to_school.click()
+    browser.save_screenshot('sffxzs.png')
+
+    # #是否处于隔离期
+    # not_at_quarantine = browser.find_element_by_xpath("//div[@name='sfcyglq']/div/div[2]")
+    # not_at_quarantine.click()
+    # sleep(0.5)
+    # browser.save_screenshot('sfcyglq.png')
+
+    #提交
     footers = browser.find_element_by_class_name('footers')
     footers.click()
     sleep(1)
-
     browser.save_screenshot('confirm.png')
 
+    #确认
     confirm = browser.find_element_by_class_name('wapcf-btn-ok')
     confirm.click()
     sleep(1)
-
     browser.save_screenshot('signed.png')
+    
     datee = time.asctime()
 
     print("%s signed successfully! " % (datee), file=log)
