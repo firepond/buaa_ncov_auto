@@ -37,7 +37,6 @@ def sign():
         user = WebDriverWait(browser, 30).until(
             EC.element_to_be_clickable((By.TAG_NAME, "input")))
     finally:
-        sleep(1)
         browser.save_screenshot('login.png')
 
     username = browser.find_element_by_tag_name('input')
@@ -56,7 +55,7 @@ def sign():
     finally:
         browser.save_screenshot('loaded.png')
 
-    sleep(3)
+    sleep(1)
 
     # Check if already signed.
     if EC.text_to_be_present_in_element((By.CLASS_NAME, "footers"), "您已提交过信息")(browser) :
@@ -87,13 +86,12 @@ def sign():
     # 所在地点
     where = browser.find_element_by_name("area")
     where.click()
-    sleep(2)
+    sleep(1)
     browser.save_screenshot('geo.png')
 
     #今日体温范围
     body_temperature = browser.find_element_by_xpath("//div[@name='tw']/div/div[2]")
     body_temperature.click()
-    sleep(0.5)
     browser.save_screenshot('tw.png')
 
     # 是否在校
